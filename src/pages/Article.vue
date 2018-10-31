@@ -84,7 +84,7 @@
 		    
 		    <el-form-item label="缩略图" label-width="120px">
 					<el-upload
-					  action="http://47.107.71.18:8099/manager/file/upload"
+					  action="http://120.78.164.247:8099/manager/file/upload"
 					  :file-list="articleDialog.fileList"
 					  :on-remove='handleUploadRemove'
 					  :on-success='handlerUploadSuccess'

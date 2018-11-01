@@ -21,8 +21,7 @@ axios.interceptors.request.use((config) => {
 axios.interceptors.response.use(function (response) {
 	if(response.data.status == 500 && response.data.message == '尚未登录，请登录!'){
 		//获取根vue实例，然后进行跳转
-
-		return false;
+		window.vm.currentComponent = 'Login';
 	}
   return response;
 });

@@ -15,10 +15,10 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-new Vue({
+let vm = new Vue({
   el: '#app',
   data:{
-  	currentComponent:'Login'
+  	currentComponent:'App'
   },
   router,
   components: { App,Login },
@@ -26,3 +26,5 @@ new Vue({
 		<component v-bind:is="currentComponent"></component>
   `
 })
+
+window.vm = vm;

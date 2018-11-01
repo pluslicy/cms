@@ -192,12 +192,12 @@
 			},
 			closeCategoryDialog(){
 				this.categoryDialog.form = {};
+				this.resetForm();
 				this.categoryDialog.visible = false;
 			},
 			toAddCategory(){
 				this.categoryDialog.title = '添加栏目';
 				this.categoryDialog.visible = true;
-				this.resetForm();
 			},
 			// 查询所有栏目
 			findAllCategories(){

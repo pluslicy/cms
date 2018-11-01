@@ -81,7 +81,7 @@
     box-sizing: border-box;
   }
   .el-dialog__body {
-    padding: 2em 1em 0 1em;
+    padding: 2em 2em 0 2em;
   }
 
   .header {
@@ -146,6 +146,7 @@
     background-color: #ffffff;
     border-radius: 5px;
     padding: .5em;
+    overflow-y: auto;
   }
 
 

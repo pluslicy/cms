@@ -50,11 +50,10 @@
 		<!-- 模态框区 -->
 		<el-dialog fullscreen :title="articleDialog.title" :visible.sync="articleDialog.visible">
 			<!-- {{articleDialog.form}} -->
-		  <el-form :model="articleDialog.form" size='small' >
-		    <el-form-item label="资讯标题" label-width="120px">
+		  <el-form ref='articleForm' :model="articleDialog.form" size='small' :rules="rules" >
+		    <el-form-item label="资讯标题" label-width="120px" prop="title">
 		      <el-input v-model="articleDialog.form.title" autocomplete="off"></el-input>
 		    </el-form-item>
-
 		    <el-row>
 		    	<el-col :span='12'>
 		    		<el-form-item label="列表样式" label-width="120px">
@@ -71,10 +70,9 @@
 				      	</div>
 				      </div>
 				    </el-form-item>
-		    		
 		    	</el-col>
 		    	<el-col :span='12'>
-		    		<el-form-item label="所属栏目" label-width="120px">
+		    		<el-form-item label="所属栏目" label-width="120px" prop="categoryId">
 				      <el-select v-model="articleDialog.form.categoryId" placeholder="一级栏目" style="width:100%">
 				        <el-option :key='index' v-for='(c,index) in categories' :label="c.name" :value="c.id"></el-option>
 				      </el-select>
@@ -84,7 +82,7 @@
 		    
 		    <el-form-item label="缩略图" label-width="120px">
 					<el-upload
-					  action="http://120.78.164.247:8099/manager/file/upload"
+					  action="http://47.107.71.18:8099/manager/file/upload"
 					  :file-list="articleDialog.fileList"
 					  :on-remove='handleUploadRemove'
 					  :on-success='handlerUploadSuccess'
@@ -101,7 +99,6 @@
 					  placeholder="请输入内容"
 					  v-model="articleDialog.form.content">
 					</el-input> -->
-
 					<mavon-editor ref=md v-model="articleDialog.form.content"/>
 
 		    </el-form-item>
@@ -138,6 +135,18 @@
 						fileIds:[]
 					},
 					fileList:[]
+				},
+				rules:{
+					title:[{
+						required: true, 
+						message: '请输入标题',
+						trigger: 'blur' 
+					}],
+					categoryId:[{
+						required: true, 
+						message: '请选择栏目',
+						trigger: 'change' 
+					}]
 				}
 			}
 		},
@@ -155,10 +164,14 @@
 			this.findAllArticles();
 		},
 		methods:{
+			resetForm(){
+				this.$refs.articleForm.resetFields();
+			},
 			toUpdateArticle(row){
 				// 1. 显示模态框
 				this.articleDialog.title = '修改资讯';
 				this.articleDialog.visible = true;
+
 				// 2. 克隆当前行数据（避免错误修改）
 				let article = _.cloneDeep(row);
 				// 3. 处理附件默认显示
@@ -185,6 +198,7 @@
 				//5 将处理后的结果与表单双向绑定
 				this.articleDialog.form = article;
 			},
+
 			batchDeleteArticles(){
 				let ids  = this.multipleSelection.map((item)=>{
 					return item.id;
@@ -196,38 +210,42 @@
 			},
 			// 关闭模态框
 			closeArticleDialog(){
-				
+				this.resetForm();
 				this.articleDialog.visible = false;
 			},
 			// 保存或更新文章
 			saveOrUpdateArticle(){
 
-				this.articleDialog.form.source = this.$refs.md.d_render;
-
-				let url = '/manager/article/saveOrUpdateArticle'
-				axios.post(url,this.articleDialog.form)
-				.then(({data:result})=>{
-					if(result.status = 200){
-						//1. 关闭模态框
-						this.closeArticleDialog();
-						//2. 提示成功
-						this.$notify({
-		          title: '成功',
-		          message: result.message,
-		          type: 'success'
-		        });
-		        //3. 刷新
-						this.findAllArticles();
-					} else {
-						this.$notify.error({
-		          title: '错误',
-		          message: result.message
-		        });
+				this.$refs.articleForm.validate((valid)=>{
+					if(valid){
+						this.articleDialog.form.source = this.$refs.md.d_render;
+						let url = '/manager/article/saveOrUpdateArticle'
+						axios.post(url,this.articleDialog.form)
+						.then(({data:result})=>{
+							if(result.status = 200){
+								//1. 关闭模态框
+								this.closeArticleDialog();
+								//2. 提示成功
+								this.$notify({
+				          title: '成功',
+				          message: result.message,
+				          type: 'success'
+				        });
+				        //3. 刷新
+								this.findAllArticles();
+							} else {
+								this.$notify.error({
+				          title: '错误',
+				          message: result.message
+				        });
+							}
+						})
+						.catch((error)=>{
+							this.$notify.error({title: '错误', message: '网络异常'});
+						});
 					}
 				})
-				.catch((error)=>{
-					this.$notify.error({title: '错误', message: '网络异常'});
-				});
+			
 			},
 			handlerUploadSuccess(response, file, fileList){
 				file.name = response.data.id;
@@ -263,6 +281,8 @@
 				};
 				this.articleDialog.title = '发布资讯';
 				this.articleDialog.visible = true;
+
+
 			},
 			// 查询所有栏目
 			findAllCategories(){

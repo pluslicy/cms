@@ -18,7 +18,15 @@ Vue.config.productionTip = false
 let vm = new Vue({
   el: '#app',
   data:{
-  	currentComponent:'App'
+  	currentComponent:'Login'
+  },
+  created(){
+  	let user = JSON.parse(localStorage.getItem('user'));
+  	if(user&& user.id){
+  		this.currentComponent = 'App'
+  	} else{
+  		this.currentComponent = 'Login'
+  	}
   },
   router,
   components: { App,Login },
@@ -28,3 +36,6 @@ let vm = new Vue({
 })
 
 window.vm = vm;
+
+
+

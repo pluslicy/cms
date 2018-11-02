@@ -3,7 +3,23 @@
     <!-- 头 -->
     <div class="header">
       <div class="title">
-        <i class="fa fa-tv"></i> &nbsp;&nbsp;看点咨询精选</div>
+        <i class="fa fa-tv"></i> &nbsp;&nbsp;看点咨询精选
+      </div>
+      <div class="info">
+        <img class="photo" :src="user.userface" alt="">
+        <div class="u">
+<el-dropdown @command='handleCommand'>
+  <span class="el-dropdown-link">
+    {{user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
+  </span>
+  <el-dropdown-menu slot="dropdown">
+    <el-dropdown-item>个人中心</el-dropdown-item>
+    <el-dropdown-item command='logout'>退出</el-dropdown-item>
+  </el-dropdown-menu>
+</el-dropdown>
+        </div>
+        
+      </div>
     </div>
     <!-- 体 -->
     <div class="center">
@@ -48,15 +64,41 @@
   </div>
 </template>
 <script>
+  import axios from '@/http/axios'
   export default {
     data(){
       return {
-        currentRoute:'/'
+        currentRoute:'/',
+        user:{}
       }
     },
     watch:{
       '$route':function(to,from){
         this.currentRoute = to.path;
+      }
+    },
+    created(){
+      this.currentRoute = this.$route.path;
+
+
+      // 从localStorage中获取用户信息，用于在页面中显示
+      let user = JSON.parse(localStorage.getItem('user'));
+      if(user && user.id){
+        this.user = user;
+      } else {
+        window.vm.currentComponent = 'Login';
+      }
+    },
+    methods:{
+      handleCommand(command){
+        if(command == 'logout'){
+          axios.get('/logout').then(()=>{
+            //跳转
+            window.vm.currentComponent = 'Login';
+            //清理localstorage中的user
+            localStorage.removeItem('user');
+          });
+        }
       }
     }
   }
@@ -66,9 +108,13 @@
     font: normal normal 12px '微软雅黑','Microsoft YaHei';
     color: #666
   }
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  }
   body , ul ,ol,dl ,p, h1,h2,h3 {
     margin: 0;
-    padding: 0
+    padding: 0;
+    background-color:#fff;
   }
   ul , ol {
     list-style: none;
@@ -96,6 +142,26 @@
     color: #ffffff;
     line-height: 60px;
     font-size: 18px;
+    float: left;
+  }
+  .header .photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-top: 5px;
+    margin-right: 1em;
+  }
+  .header .info {
+    float: right;
+    cursor: pointer;
+  }
+  .header .info .u {
+    float: right;
+    line-height: 20px;
+    margin-top: 20px;
+  }
+  .header .info .el-dropdown {
+    color: #fff;
   }
 
   .center {

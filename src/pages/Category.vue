@@ -2,18 +2,18 @@
 	<div class="category">
 		<!-- 按钮区 -->
 		<div class="btns">
-			<el-button size='mini' @click='toAddCategory'>添加</el-button>
-			<el-button size='mini' @click='batchDeleteCategory'>批量删除</el-button>
+			<el-button size='small' @click='toAddCategory'>添加</el-button>
+			<el-button size='small' @click='batchDeleteCategory'>批量删除</el-button>
 		</div>
 		<!-- 按钮区结束 -->
 		<!-- 表格区 -->
 		<div class="table" v-loading='loading'>
-			<el-table :border='true' size='mini' :data="categories" style="width: 100%" @selection-change="handleSelectionChange">
+			<el-table :border='true' size='small' :data="categories" style="width: 100%" @selection-change="handleSelectionChange">
 				<el-table-column type="selection" width="55" fixed></el-table-column>
-	      <el-table-column prop="name" label="栏目名称" width="180"></el-table-column>
-	      <el-table-column prop="parent.name" label="父栏目" width="180"></el-table-column>
+	      <el-table-column prop="name" label="栏目名称" width="180" align="center"></el-table-column>
+	      <el-table-column prop="parent.name" label="父栏目" width="180" align="center"></el-table-column>
 	      <el-table-column prop="comment" label="描述"></el-table-column>
-	      <el-table-column label="操作" width='60'>
+	      <el-table-column label="操作" width='80' align='center'>
 	      	<template slot-scope='{row}'>
 	      		<i class="fa fa-trash" @click='deleteCategory(row.id)'></i>
 	      		<i class="fa fa-pencil" @click='toUpdateCategory(row)'></i>
@@ -44,8 +44,8 @@
 		    </el-form-item>
 		  </el-form>
 		  <div slot="footer" class="dialog-footer">
-		    <el-button size='mini' @click='closeCategoryDialog'>取 消</el-button>
-		    <el-button size='mini' type="primary" @click='saveOrUpdateCategory'>确 定</el-button>
+		    <el-button size='small' @click='closeCategoryDialog'>取 消</el-button>
+		    <el-button size='small' type="primary" @click='saveOrUpdateCategory'>确 定</el-button>
 		  </div>
 		</el-dialog>
 		<!-- 模态框结束 -->
@@ -215,18 +215,6 @@
 		}
 	}
 </script>
-<style scoped>
-	.btns {
-		margin-bottom: .5em;
-	}
-	i.fa {
-		margin: 0 .3em;
-		cursor: pointer;
-	}
-	i.fa.fa-trash {
-		color: #F56C6C;
-	}
-</style>
 
 
 

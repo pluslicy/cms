@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Category from '@/pages/Category'
 import Article from '@/pages/Article'
-import User from '@/pages/User'
+import Comment from '@/pages/Comment'
 import Setting from '@/pages/setting'
 import SettingInfo from '@/pages/setting/Info'
 import SettingAuth from '@/pages/setting/Auth'
@@ -27,8 +27,8 @@ export default new Router({
       path: '/article',
       component: Article
     },{
-      path: '/user',
-      component: User
+      path: '/comment',
+      component: Comment
     },{
       path:'/setting',
       component:Setting,

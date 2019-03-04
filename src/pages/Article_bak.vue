@@ -13,7 +13,7 @@
 			  clearable>
 			</el-input>
 
-			<el-button size='small' @click='toAddArticle'>发布资讯</el-button>
+			<el-button size='small' @click='toAddArticle'>添加</el-button>
 			<el-button size='small' @click='batchDeleteArticles'>批量删除</el-button>
 		</div>
 		<!-- 按钮区结束 -->
@@ -48,7 +48,8 @@
 		</div>
 		<!-- 分页结束 -->
 		<!-- 模态框区 -->
-		<el-dialog :before-close='handleBeforeClose' :close-on-press-escape='false' @close='handleCloseDialog' fullscreen :title="articleDialog.title" :visible.sync="articleDialog.visible">
+		<el-dialog fullscreen :title="articleDialog.title" :visible.sync="articleDialog.visible">
+			<!-- {{articleDialog.form}} -->
 		  <el-form label-position='right' ref='articleForm' :model="articleDialog.form" size='small' :rules="rules" >
 		    <el-row>
 		    	<el-col :span='18'>
@@ -63,14 +64,64 @@
 				      </el-select>
 				    </el-form-item>
 		    	</el-col>
+		    	<!-- <el-col :span='8'>
+		    		<el-form-item label="列表样式" label-width="100px">
+							<el-select v-model="articleDialog.form.liststyle" placeholder="列表样式" style="width:100%">
+				        <el-option label="style-two" value="style-one">
+				        	<span style="float: left">style-one</span>
+      						<span style="float: right">
+      							<img style="width:100px" src="@/assets/list_one.jpg" alt="">
+      						</span>
+				        </el-option>
+				        <el-option label="style-two" value="style-two">
+				        	<span style="float: left">style-two</span>
+      						<span style="float: right">
+      							<img style="width:100px" src="@/assets/list_two.jpg" alt="">
+      						</span>
+				        </el-option>
+				      </el-select>
+ 						-->
+				     <!--  <div class="list_style">
+				      	<div class="list_one" 
+				      	:class='{current:articleDialog.form.liststyle == "style-one"}' 
+				      	@click='articleDialog.form.liststyle="style-one"'>
+				      		<img src="@/assets/list_one.jpg" alt="">
+				      	</div>
+				      	<div class="list_two" 
+				      	:class='{current:articleDialog.form.liststyle == "style-two"}'
+				      	@click='articleDialog.form.liststyle="style-two"'>
+				      		<img src="@/assets/list_two.jpg" alt="">
+				      	</div>
+				      </div> -->
+				    <!-- </el-form-item>
+		    	</el-col> -->
+		    	
 		    </el-row>
+		    <!--
+		    <el-form-item label="缩略图" label-width="100px">
+					<el-upload
+					  action="http://134.175.154.93:8099/manager/file/upload"
+					  :file-list="articleDialog.fileList"
+					  :on-remove='handleUploadRemove'
+					  :on-success='handlerUploadSuccess'
+					  with-credentials
+					  list-type="picture-card">
+					  <el-button size="small" type="text">点击上传</el-button>
+					  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+					</el-upload>
+		    </el-form-item>
+				 -->
+
 				<el-form-item label="资讯正文" label-width="100px">
 					<mavon-editor style="min-height: 450px" ref=md v-model="articleDialog.form.content"/>
+
 		    </el-form-item>
 		  </el-form>
+
+
 		  <div slot="footer" class="dialog-footer">
-		    <!-- <el-button size='small' @click="closeArticleDialog">取 消</el-button> -->
-		    <el-button size='small' type="primary" @click='saveOrUpdateArticle'>确认发布</el-button>
+		    <el-button size='small' @click="closeArticleDialog">取 消</el-button>
+		    <el-button size='small' type="primary" @click='saveOrUpdateArticle'>确 定</el-button>
 		  </div>
 		</el-dialog>
 		<!-- 模态框区结束 -->
@@ -127,25 +178,14 @@
 			this.findAllArticles();
 		},
 		methods:{
-			// 设置间歇自动保存
-			startInterval(){
-				
+			resetForm(){
+				this.$refs.articleForm.resetFields();
 			},
-			// 自动保存
-			autoSave(){
-				this.articleDialog.form.source = this.$refs.md.d_render;
-				let url = '/manager/article/saveOrUpdateArticle'
-				axios.post(url,this.articleDialog.form)
-				.then(({data:result})=>{
-					alert(JSON.stringify(result));
-				});
-			},
-			
 			toUpdateArticle(row){
-				this.startInterval();
 				// 1. 显示模态框
 				this.articleDialog.title = '修改资讯';
 				this.articleDialog.visible = true;
+
 				// 2. 克隆当前行数据（避免错误修改）
 				let article = _.cloneDeep(row);
 				// 3. 处理附件默认显示
@@ -187,26 +227,9 @@
 				this.resetForm();
 				this.articleDialog.visible = false;
 			},
-			// 模态框关闭之前的处理
-			handleBeforeClose(done){
-				this.$confirm('关闭模态框将放弃当前所有操作, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(()=>{
-        	done();
-        })
-			},
-			// 模态框关闭时候的回调函数
-			handleCloseDialog(){
-				// clearInterval(this.interval);
-			},
-			// 重置表单
-			resetForm(){
-				this.$refs.articleForm.resetFields();
-			},
 			// 保存或更新文章
 			saveOrUpdateArticle(){
+
 				this.$refs.articleForm.validate((valid)=>{
 					if(valid){
 						this.articleDialog.form.source = this.$refs.md.d_render;
@@ -236,6 +259,7 @@
 						});
 					}
 				})
+			
 			},
 			handlerUploadSuccess(response, file, fileList){
 				file.name = response.data.id;
@@ -264,7 +288,6 @@
 				})
 			},
 			toAddArticle(){
-				this.startInterval();
 				this.articleDialog.fileList = [];
 				this.articleDialog.form = {
 						liststyle:'style-one',
@@ -272,6 +295,8 @@
 				};
 				this.articleDialog.title = '发布资讯';
 				this.articleDialog.visible = true;
+
+
 			},
 			// 查询所有栏目
 			findAllCategories(){

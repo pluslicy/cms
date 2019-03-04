@@ -4,7 +4,7 @@
 			<li :class="{current:currentRoute=='/setting/info'}">
 				<router-link to='/setting/info'>基础设置</router-link>
 			</li>
-			<li :class="{current:currentRoute=='/setting/auth'}">
+			<li :class="{current:currentRoute.indexOf('/setting/auth')==0}">
 				<router-link to='/setting/auth'>权限设置</router-link>
 			</li>
 			<li :class="{current:currentRoute=='/setting/adv'}">

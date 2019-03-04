@@ -3,7 +3,7 @@
     <!-- 头 -->
     <div class="header">
       <div class="title">
-        <i class="fa fa-tv"></i> &nbsp;&nbsp;看点咨询精选
+        <i class="fa fa-tv"></i> &nbsp;&nbsp;咨询精选
       </div>
       <div class="info">
         <img class="photo" :src="user.userface" alt="">
